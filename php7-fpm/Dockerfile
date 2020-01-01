@@ -2,23 +2,10 @@
 FROM otezvikentiy/php7.2-fpm:0.0.11
 ARG TIMEZONE
 
-#RUN apt-get update && apt-get install -y \
-#    openssl \
-#    git \
-#    unzip
-
-# Install Composer
-#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-#&& composer --version
-
 # Set timezone
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} > /etc/timezone \
 && printf '[PHP]\ndate.timezone = "%s"\n', ${TIMEZONE} > /usr/local/etc/php/conf.d/tzone.ini \
 && "date"
-
-# Type docker-php-ext-install to see available extensions
-#RUN docker-php-ext-install pdo pdo_mysql
-
 
 # install xdebug
 #RUN pecl install xdebug \
@@ -37,8 +24,14 @@ RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-x
 RUN echo 'alias sf="php app/console"' >> ~/.bashrc \
 && echo 'alias sf3="php bin/console"' >> ~/.bashrc
 
-#RUN apt-get install wget
-#RUN wget https://get.symfony.com/cli/installer -O - | bash
-#RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+# install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --filename=composer --install-dir=/bin
+ENV PATH /root/.composer/vendor/bin:$PATH
+
+# install phpunit
+RUN curl https://phar.phpunit.de/phpunit.phar -L > phpunit.phar \
+  && chmod +x phpunit.phar \
+  && mv phpunit.phar /usr/local/bin/phpunit \
+  && phpunit --version
 
 WORKDIR /app

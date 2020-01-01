@@ -3,7 +3,6 @@ version: '3.1'
 services:
 
   php-fpm:
-#    image: otezvikentiy/php7.2-fpm:0.0.11
     build:
       context: php7-fpm
       args:
@@ -11,12 +10,11 @@ services:
     ports:
       - '9000:9000'
     volumes:
-      - ${SYMFONY_APP_PATH}:/app
-      - ./logs/symfony:/var/www/symfony/app/logs
+      - ${APP_PATH}:/app
     working_dir: /app
     container_name: 'php-fpm'
-    links:
-      - postgres
+#    links:
+#      - postgres
 
   nginx:
     #image: nginx:1.15.0
@@ -26,7 +24,7 @@ services:
     ports:
       - '80:80'
     volumes:
-      - ${SYMFONY_APP_PATH}:/app
+      - ${APP_PATH}:/app
       - ./logs/nginx/:/var/log/nginx
 
   postgres:
@@ -41,35 +39,5 @@ services:
       POSTGRES_USER: 'db_user'
       POSTGRES_PASSWORD: 'db_pass'
 
-  rabbitmq:
-    image: rabbitmq:3.7.5-management
-    working_dir: /app
-    hostname: rabbit-mq
-    container_name: 'rabbit-mq'
-    ports:
-      - '15672:15672'
-      - '5672:5672'
-    environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
-      RABBITMQ_DEFAULT_VHOST: my_vhost
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-    container_name: 'elastic-search'
-    environment:
-      - discovery.type=single-node
-      - "discovery.zen.ping.unicast.hosts=elasticsearch"
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - 9200:9200
-      - 9300:9300
-    working_dir: /app
-    volumes:
-      - ${SYMFONY_APP_PATH}:/app
-      - ./data/elasticsearch:/usr/share/elasticsearch/data
-
 volumes:
-  elasticsearch:
   postgresql:

@@ -7,9 +7,9 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir /etc/nginx/sites-available
 RUN mkdir /etc/nginx/sites-enabled
 ADD nginx.conf /etc/nginx/
-ADD symfony.conf /etc/nginx/sites-available/
+ADD airplans.conf /etc/nginx/sites-available/
 
-RUN ln -s /etc/nginx/sites-available/symfony.conf /etc/nginx/sites-enabled/symfony && mv /etc/nginx/conf.d/default.conf ../
+RUN ln -s /etc/nginx/sites-available/airplans.conf /etc/nginx/sites-enabled/airplans && mv /etc/nginx/conf.d/default.conf ../
 
 RUN echo "upstream php-upstream { server php-fpm:9000; }" > /etc/nginx/conf.d/upstream.conf
 
